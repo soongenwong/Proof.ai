@@ -1,0 +1,8 @@
+{
+  "name": "proofai_mcp",
+  "description": "A GolfMCP project",
+  "host": "127.0.0.1",
+  "port": 3000,
+  "transport": "sse",
+  "opentelemetry_enabled": false
+} 

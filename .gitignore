@@ -2,3 +2,6 @@
 .env
 .venv/
 .env/
+
+proofai_mcp/dist/
+proofai_mcp/__pycache__/
