@@ -1,0 +1,632 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Veo 3 Voice Video Generator</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .header h1 {
+            color: #2d3748;
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .header p {
+            color: #718096;
+            font-size: 1.1rem;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            margin-bottom: 30px;
+        }
+
+        @media (max-width: 768px) {
+            .grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .panel {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.07);
+            border: 1px solid #e2e8f0;
+        }
+
+        .panel h2 {
+            color: #2d3748;
+            margin-bottom: 20px;
+            font-size: 1.3rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #4a5568;
+        }
+
+        input, select, textarea {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e2e8f0;
+            border-radius: 8px;
+            font-size: 14px;
+            transition: border-color 0.2s;
+        }
+
+        input:focus, select:focus, textarea:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        textarea {
+            resize: vertical;
+            height: 100px;
+        }
+
+        .btn {
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+            width: 100%;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .btn-secondary {
+            background: #718096;
+            margin-top: 10px;
+        }
+
+        .status {
+            margin-top: 20px;
+            padding: 15px;
+            border-radius: 8px;
+            font-weight: 500;
+        }
+
+        .status.loading {
+            background: #ebf8ff;
+            color: #2b6cb0;
+            border: 1px solid #90cdf4;
+        }
+
+        .status.success {
+            background: #f0fff4;
+            color: #276749;
+            border: 1px solid #9ae6b4;
+        }
+
+        .status.error {
+            background: #fed7d7;
+            color: #c53030;
+            border: 1px solid #fc8181;
+        }
+
+        .videos-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        .video-card {
+            background: white;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.07);
+            border: 1px solid #e2e8f0;
+        }
+
+        .video-card video {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+        }
+
+        .video-info {
+            padding: 15px;
+        }
+
+        .video-info h3 {
+            color: #2d3748;
+            margin-bottom: 5px;
+            font-size: 0.9rem;
+        }
+
+        .video-info p {
+            color: #718096;
+            font-size: 0.8rem;
+        }
+
+        .voice-section {
+            background: linear-gradient(45deg, #f7fafc, #edf2f7);
+            border: 2px dashed #cbd5e0;
+            text-align: center;
+            padding: 30px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+        }
+
+        .voice-btn {
+            background: linear-gradient(45deg, #38a169, #48bb78);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 50px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin: 10px;
+        }
+
+        .voice-btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 4px 15px rgba(56, 161, 105, 0.4);
+        }
+
+        .voice-btn.recording {
+            background: linear-gradient(45deg, #e53e3e, #fc8181);
+            animation: pulse 1.5s infinite;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+
+        .loading-spinner {
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #667eea;
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            animation: spin 1s linear infinite;
+            display: inline-block;
+            margin-right: 10px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        .full-width {
+            grid-column: 1 / -1;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🎬 Veo 3 Voice Video Generator</h1>
+            <p>Create AI videos with voice commands or text prompts</p>
+        </div>
+
+        <div class="grid">
+            <!-- Voice Input Panel -->
+            <div class="panel">
+                <h2>🎤 Voice Input</h2>
+                <div class="voice-section">
+                    <p style="color: #718096; margin-bottom: 15px;">
+                        Click to record your video prompt
+                    </p>
+                    <button class="voice-btn" id="voiceBtn">🎤 Start Recording</button>
+                    <div id="voiceStatus" class="status hidden"></div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="speechText">Detected Speech:</label>
+                    <textarea id="speechText" placeholder="Your spoken prompt will appear here..."></textarea>
+                </div>
+                
+                <button class="btn" id="generateFromSpeech">🎬 Generate from Speech</button>
+            </div>
+
+            <!-- Text Input Panel -->
+            <div class="panel">
+                <h2>✍️ Text Input</h2>
+                <div class="form-group">
+                    <label for="textPrompt">Video Prompt:</label>
+                    <textarea id="textPrompt" placeholder="Describe the video you want to create..."></textarea>
+                </div>
+                
+                <div class="form-group">
+                    <label for="style">Style:</label>
+                    <select id="style">
+                        <option value="cinematic">Cinematic</option>
+                        <option value="documentary">Documentary</option>
+                        <option value="artistic">Artistic</option>
+                        <option value="commercial">Commercial</option>
+                        <option value="realistic">Realistic</option>
+                        <option value="dramatic">Dramatic</option>
+                        <option value="minimalist">Minimalist</option>
+                        <option value="vibrant">Vibrant</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label for="format">Format:</label>
+                    <select id="format">
+                        <option value="landscape">Landscape (16:9)</option>
+                        <option value="portrait">Portrait (9:16)</option>
+                        <option value="mobile">Mobile (9:16)</option>
+                        <option value="wide">Wide (16:9)</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label for="variations">Number of Variations:</label>
+                    <select id="variations">
+                        <option value="1">1 Video</option>
+                        <option value="2" selected>2 Videos</option>
+                        <option value="3">3 Videos</option>
+                        <option value="4">4 Videos</option>
+                        <option value="5">5 Videos</option>
+                    </select>
+                </div>
+                
+                <button class="btn" id="generateFromText">🎬 Generate Videos</button>
+                <button class="btn btn-secondary" id="generateSingle">📹 Generate Single Video</button>
+            </div>
+        </div>
+
+        <!-- Status Panel -->
+        <div class="panel full-width">
+            <h2>📊 Generation Status</h2>
+            <div id="generationStatus" class="status hidden"></div>
+            <div id="progressInfo"></div>
+        </div>
+
+        <!-- Recent Videos Panel -->
+        <div class="panel full-width">
+            <h2>🎥 Recent Videos</h2>
+            <button class="btn btn-secondary" id="refreshVideos" style="width: auto; margin-bottom: 20px;">🔄 Refresh</button>
+            <div id="videosContainer" class="videos-grid"></div>
+        </div>
+    </div>
+
+    <script>
+        // Configuration
+        const API_BASE = 'http://localhost:8000';
+        
+        // Elements
+        const voiceBtn = document.getElementById('voiceBtn');
+        const voiceStatus = document.getElementById('voiceStatus');
+        const speechText = document.getElementById('speechText');
+        const textPrompt = document.getElementById('textPrompt');
+        const generateFromSpeech = document.getElementById('generateFromSpeech');
+        const generateFromText = document.getElementById('generateFromText');
+        const generateSingle = document.getElementById('generateSingle');
+        const generationStatus = document.getElementById('generationStatus');
+        const progressInfo = document.getElementById('progressInfo');
+        const videosContainer = document.getElementById('videosContainer');
+        const refreshVideos = document.getElementById('refreshVideos');
+        
+        // Voice recognition setup
+        let recognition = null;
+        let isRecording = false;
+        
+        if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
+            const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+            recognition = new SpeechRecognition();
+            recognition.continuous = true;
+            recognition.interimResults = true;
+            recognition.lang = 'en-US';
+            
+            recognition.onstart = () => {
+                isRecording = true;
+                voiceBtn.textContent = '🔴 Recording...';
+                voiceBtn.classList.add('recording');
+                showStatus(voiceStatus, 'Listening for your video prompt...', 'loading');
+            };
+            
+            recognition.onresult = (event) => {
+                let finalTranscript = '';
+                let interimTranscript = '';
+                
+                for (let i = event.resultIndex; i < event.results.length; i++) {
+                    const transcript = event.results[i][0].transcript;
+                    if (event.results[i].isFinal) {
+                        finalTranscript += transcript;
+                    } else {
+                        interimTranscript += transcript;
+                    }
+                }
+                
+                speechText.value = finalTranscript + interimTranscript;
+                if (finalTranscript) {
+                    textPrompt.value = finalTranscript; // Also populate text input
+                }
+            };
+            
+            recognition.onend = () => {
+                isRecording = false;
+                voiceBtn.textContent = '🎤 Start Recording';
+                voiceBtn.classList.remove('recording');
+                if (speechText.value.trim()) {
+                    showStatus(voiceStatus, 'Speech captured successfully!', 'success');
+                } else {
+                    showStatus(voiceStatus, 'No speech detected. Try again.', 'error');
+                }
+            };
+            
+            recognition.onerror = (event) => {
+                isRecording = false;
+                voiceBtn.textContent = '🎤 Start Recording';
+                voiceBtn.classList.remove('recording');
+                showStatus(voiceStatus, `Speech recognition error: ${event.error}`, 'error');
+            };
+        } else {
+            voiceBtn.disabled = true;
+            voiceBtn.textContent = '❌ Voice not supported';
+            showStatus(voiceStatus, 'Speech recognition not supported in this browser', 'error');
+        }
+        
+        // Event listeners
+        voiceBtn.addEventListener('click', () => {
+            if (!recognition) return;
+            
+            if (isRecording) {
+                recognition.stop();
+            } else {
+                speechText.value = '';
+                recognition.start();
+            }
+        });
+        
+        generateFromSpeech.addEventListener('click', () => {
+            const speech = speechText.value.trim();
+            if (!speech) {
+                showStatus(generationStatus, 'Please record some speech first!', 'error');
+                return;
+            }
+            
+            generateVideos('speech', {
+                speech_text: speech,
+                style: document.getElementById('style').value,
+                format_type: document.getElementById('format').value
+            });
+        });
+        
+        generateFromText.addEventListener('click', () => {
+            const prompt = textPrompt.value.trim();
+            if (!prompt) {
+                showStatus(generationStatus, 'Please enter a text prompt!', 'error');
+                return;
+            }
+            
+            generateVideos('advanced', {
+                prompt: prompt,
+                style: document.getElementById('style').value,
+                format_type: document.getElementById('format').value,
+                allow_people: 'no',
+                variations: document.getElementById('variations').value
+            });
+        });
+        
+        generateSingle.addEventListener('click', () => {
+            const prompt = textPrompt.value.trim();
+            if (!prompt) {
+                showStatus(generationStatus, 'Please enter a text prompt!', 'error');
+                return;
+            }
+            
+            generateVideos('single', { prompt: prompt });
+        });
+        
+        refreshVideos.addEventListener('click', loadRecentVideos);
+        
+        // Helper functions
+        function showStatus(element, message, type) {
+            element.className = `status ${type}`;
+            element.textContent = message;
+            element.classList.remove('hidden');
+        }
+        
+        function hideStatus(element) {
+            element.classList.add('hidden');
+        }
+        
+        async function generateVideos(toolName, parameters) {
+            const toolMap = {
+                'speech': 'generate_from_speech',
+                'advanced': 'generate_video_advanced',
+                'single': 'generate_video_single'
+            };
+            
+            const tool = toolMap[toolName];
+            if (!tool) {
+                showStatus(generationStatus, 'Invalid tool name', 'error');
+                return;
+            }
+            
+            // Disable buttons
+            document.querySelectorAll('.btn').forEach(btn => btn.disabled = true);
+            
+            showStatus(generationStatus, '🎬 Starting video generation...', 'loading');
+            progressInfo.innerHTML = '<div class="loading-spinner"></div>Connecting to Veo 3...';
+            
+            try {
+                const response = await fetch(`${API_BASE}/tools/${tool}`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ parameters })
+                });
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+                }
+                
+                const data = await response.json();
+                
+                if (data.error) {
+                    throw new Error(data.error);
+                }
+                
+                progressInfo.innerHTML = '<div class="loading-spinner"></div>Veo 3 is generating your videos... This may take 3-15 minutes.';
+                
+                // Parse the result
+                let result;
+                try {
+                    result = JSON.parse(data.result);
+                } catch (e) {
+                    result = data.result;
+                }
+                
+                if (result.success) {
+                    const videoCount = result.total_videos || result.video_urls?.length || 1;
+                    showStatus(generationStatus, `✅ Generated ${videoCount} video(s) successfully!`, 'success');
+                    progressInfo.innerHTML = `🎉 ${videoCount} videos created with ${result.model === 'veo-3.0-generate-preview' ? 'audio' : 'visual content'}!`;
+                    
+                    // Auto-refresh videos after a short delay
+                    setTimeout(loadRecentVideos, 2000);
+                } else {
+                    throw new Error(result.error || 'Video generation failed');
+                }
+                
+            } catch (error) {
+                console.error('Generation error:', error);
+                showStatus(generationStatus, `❌ Error: ${error.message}`, 'error');
+                progressInfo.innerHTML = 'Generation failed. Please check the console for details.';
+            } finally {
+                // Re-enable buttons
+                document.querySelectorAll('.btn').forEach(btn => btn.disabled = false);
+            }
+        }
+        
+        async function loadRecentVideos() {
+            try {
+                refreshVideos.disabled = true;
+                refreshVideos.innerHTML = '<div class="loading-spinner"></div>Loading...';
+                
+                const response = await fetch(`${API_BASE}/tools/list_recent_videos`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ parameters: {} })
+                });
+                
+                const data = await response.json();
+                let result;
+                
+                try {
+                    result = JSON.parse(data.result);
+                } catch (e) {
+                    result = data.result;
+                }
+                
+                if (result.videos && result.videos.length > 0) {
+                    videosContainer.innerHTML = result.videos.map(video => `
+                        <div class="video-card">
+                            <video controls>
+                                <source src="${video.url}" type="video/mp4">
+                                Your browser does not support the video tag.
+                            </video>
+                            <div class="video-info">
+                                <h3>${video.filename}</h3>
+                                <p>Size: ${video.size_mb}MB | Created: ${new Date(video.created).toLocaleString()}</p>
+                                <p>Model: ${video.model || 'Veo'}</p>
+                            </div>
+                        </div>
+                    `).join('');
+                } else {
+                    videosContainer.innerHTML = '<p style="text-align: center; color: #718096;">No videos generated yet. Create your first video above!</p>';
+                }
+                
+            } catch (error) {
+                console.error('Error loading videos:', error);
+                videosContainer.innerHTML = '<p style="text-align: center; color: #e53e3e;">Error loading videos. Make sure your server is running.</p>';
+            } finally {
+                refreshVideos.disabled = false;
+                refreshVideos.innerHTML = '🔄 Refresh';
+            }
+        }
+        
+        // Initialize
+        document.addEventListener('DOMContentLoaded', () => {
+            loadRecentVideos();
+            
+            // Check server status
+            fetch(`${API_BASE}/health`)
+                .then(response => response.json())
+                .then(data => {
+                    console.log('Server status:', data);
+                    if (data.model) {
+                        progressInfo.innerHTML = `🚀 Connected to ${data.model} server`;
+                    }
+                })
+                .catch(error => {
+                    console.error('Server connection error:', error);
+                    showStatus(generationStatus, '❌ Cannot connect to server. Make sure it\'s running on localhost:8000', 'error');
+                });
+        });
+    </script>
+</body>
+</html>
