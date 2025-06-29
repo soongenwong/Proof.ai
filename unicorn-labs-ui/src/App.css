@@ -1,0 +1,245 @@
+/* src/App.css */
+
+/* --- Global Styles & Variables --- */
+:root {
+  --background-color: #F8F9FA;
+  --card-background: #FFFFFF;
+  --primary-text-color: #212529;
+  --secondary-text-color: #495057;
+  --light-text-color: #6C757D;
+  
+  --primary-button-bg: #343A40;
+  --primary-button-icon: #FFFFFF;
+  --secondary-button-bg: #E9ECEF;
+  --secondary-button-icon: #495057;
+
+  --ai-bubble-bg: #E9ECEF;
+  --user-bubble-bg: #F8F9FA;
+
+  --border-radius-sm: 8px;
+  --border-radius-md: 16px;
+  --border-radius-lg: 24px; /* Slightly larger radius for the main card */
+  --border-radius-full: 50%;
+  
+  --shadow: 0px 8px 24px rgba(149, 157, 165, 0.1);
+}
+
+body {
+  /* Set the background color defined in our variables */
+  background-color: var(--background-color);
+  color: var(--primary-text-color);
+}
+
+/* --- Page Layout --- */
+.page-container {
+  /* The container now takes the full width available */
+  width: 100%;
+  box-sizing: border-box; /* Ensures padding is included in the width */
+  padding: 24px;
+}
+
+.page-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  /* Add a max-width and center it to keep the header aligned with the card */
+  width: 100%;
+  margin: 0 auto 64px auto;
+}
+
+.logo-container {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.logo-icon-wrapper {
+  background-color: #E9ECEF;
+  border-radius: var(--border-radius-sm);
+  width: 36px;
+  height: 36px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.logo-text {
+  font-size: 20px;
+  font-weight: 600;
+  color: var(--primary-text-color);
+}
+
+.header-action-icon {
+  color: var(--secondary-text-color);
+  cursor: pointer;
+}
+
+/* --- Main Content --- */
+.main-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+
+.main-heading {
+  font-size: 48px;
+  font-weight: 700;
+  margin: 0 0 16px;
+}
+
+.main-subheading {
+  font-size: 18px;
+  color: var(--secondary-text-color);
+  max-width: 600px;
+  line-height: 1.6;
+  margin: 0 0 48px;
+}
+
+/* --- Demo Card --- */
+.demo-card {
+  background-color: var(--card-background);
+  border-radius: var(--border-radius-lg);
+  box-shadow: var(--shadow);
+  /* The card fills the container but doesn't exceed 1200px for readability */
+  width: 100%;
+  max-width: 1200px;
+  
+  padding: 32px;
+  box-sizing: border-box;
+}
+
+.card-header {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 32px;
+  color: var(--secondary-text-color);
+}
+
+.gear-icon-wrapper {
+  background-color: var(--primary-button-bg);
+  width: 56px;
+  height: 56px;
+  border-radius: var(--border-radius-full);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+/* --- Chat Interface --- */
+.chat-interface {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  margin-bottom: 32px;
+  padding: 0 16px; /* Add some horizontal padding to the chat */
+}
+
+.message-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  max-width: 75%; /* Messages don't span the full width */
+}
+
+.message-row.user-row {
+  justify-content: flex-end;
+  align-self: flex-end; /* Align the whole row to the right */
+}
+
+.avatar {
+  width: 32px;
+  height: 32px;
+  border-radius: var(--border-radius-sm);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-shrink: 0;
+}
+
+.ai-avatar {
+    background-color: var(--secondary-button-bg);
+}
+
+.user-avatar {
+  background-color: var(--secondary-button-bg);
+  color: var(--secondary-text-color);
+  font-size: 12px;
+  font-weight: 500;
+  border-radius: var(--border-radius-full);
+}
+
+.message-bubble {
+  padding: 14px 18px;
+  border-radius: var(--border-radius-md);
+  line-height: 1.5;
+  text-align: left;
+}
+
+.ai-bubble {
+  background-color: var(--ai-bubble-bg);
+  color: var(--primary-text-color);
+  border-top-left-radius: 0;
+}
+
+.user-bubble {
+  background-color: var(--user-bubble-bg);
+  color: var(--secondary-text-color);
+  border: 1px solid #E9ECEF;
+  border-top-right-radius: 0;
+}
+
+/* --- Controls Section --- */
+.controls-section {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+  padding-top: 24px;
+  border-top: 1px solid #E9ECEF; /* Added border from image */
+}
+
+.button-group {
+  display: flex;
+  gap: 12px;
+}
+
+.control-button {
+  width: 56px;
+  height: 56px;
+  border-radius: var(--border-radius-full);
+  border: none;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.control-button:hover {
+    transform: translateY(-2px);
+}
+
+.control-button.primary {
+  background-color: var(--primary-button-bg);
+  color: var(--primary-button-icon);
+}
+.control-button.primary:hover {
+  box-shadow: 0 4px 12px rgba(52, 58, 64, 0.3);
+}
+
+.control-button.secondary {
+  background-color: var(--secondary-button-bg);
+  color: var(--secondary-button-icon);
+}
+.control-button.secondary:hover {
+  background-color: #dee2e6;
+}
+
+.controls-caption {
+  color: var(--light-text-color);
+  font-size: 14px;
+  margin: 0;
+}
